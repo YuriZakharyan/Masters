@@ -109,7 +109,7 @@ class StockPricePredictor:
         return ARIMA(self.open_series, order=(p, i, q))
 
     def load_decision_tree(self):
-        return DecisionTreeRegressor()
+        return DecisionTreeRegressor(max_depth = 3)
 
     def load_random_forest(self):
         return RandomForestRegressor(n_estimators=200, random_state=42)
@@ -510,6 +510,8 @@ def main():
 
     # Train both models (one without sentiment and one with sentiment)
     # predictor_no_sentiment.train_model('Random forest')
+    # predictor_with_sentiment.train_model('Decision tree')
+    # predictor_no_sentiment.train_model('Decision tree')
     predictor_with_sentiment.train_model('LSTM')
     predictor_no_sentiment.train_model('LSTM')
     # predictor_with_sentiment.train_model('CNN')
