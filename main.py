@@ -100,7 +100,7 @@ class StockPricePredictor:
         return LinearRegression()
     
     def load_lasso(self):
-        return Lasso(alpha=0.2)
+        return Lasso(alpha=0.7)
 
     def load_arima(self, p, i, q):
         self.open_series = self.data['Price'].copy()
@@ -112,7 +112,7 @@ class StockPricePredictor:
         return DecisionTreeRegressor(max_depth = 3)
 
     def load_random_forest(self):
-        return RandomForestRegressor(n_estimators=200, random_state=42)
+        return RandomForestRegressor(n_estimators=1, random_state=0)
 
     def load_LSTM(self):
         """Load or train an LSTM model."""
@@ -129,10 +129,10 @@ class StockPricePredictor:
 
         # If the model doesn't exist, create a new one
         model = Sequential([
-            LSTM(units=100, return_sequences=True, input_shape=(1, self.X_scaled.shape[1])),
-            Dropout(0.2),
-            LSTM(units=100),
-            Dropout(0.2),
+            LSTM(units=20, return_sequences=True, input_shape=(1, self.X_scaled.shape[1])),
+            Dropout(0.5),
+            LSTM(units=20),
+            Dropout(0.5),
             Dense(units=self.output_units)
         ])
         model.compile(optimizer='adam', loss='mean_squared_error')
@@ -177,9 +177,9 @@ class StockPricePredictor:
 
         # If the model doesn't exist, create a new one
         model = Sequential([
-            Dense(units=150, activation='relu', input_dim=self.X_scaled.shape[1]),
+            Dense(units=100, activation='relu', input_dim=self.X_scaled.shape[1]),
             Dropout(0.2),
-            Dense(units=160, activation='relu'),
+            Dense(units=100, activation='relu'),
             Dropout(0.3),
             Dense(units=self.output_units)  # Output layer
         ])
@@ -201,13 +201,13 @@ class StockPricePredictor:
 
         # If the model doesn't exist, create a new one
         model = Sequential([
-            Conv1D(filters=32, kernel_size=2, activation='relu', input_shape=(self.X_scaled.shape[1], 1)),
+            Conv1D(filters=16, kernel_size=2, activation='relu', input_shape=(self.X_scaled.shape[1], 1)),
             MaxPooling1D(pool_size=1),  # Use pool_size=1 here
-            Conv1D(filters=32, kernel_size=2, activation='relu'),
+            Conv1D(filters=16, kernel_size=2, activation='relu'),
             MaxPooling1D(pool_size=1),  # Use pool_size=1 here
             Flatten(),
-            Dense(units=64, activation='relu'),
-            Dropout(0.2),
+            Dense(units=32, activation='relu'),
+            Dropout(0.5),
             Dense(units=self.output_units)
         ])
         model.compile(optimizer='adam', loss='mean_squared_error')
@@ -512,8 +512,8 @@ def main():
     # predictor_no_sentiment.train_model('Random forest')
     # predictor_with_sentiment.train_model('Decision tree')
     # predictor_no_sentiment.train_model('Decision tree')
-    predictor_with_sentiment.train_model('LSTM')
-    predictor_no_sentiment.train_model('LSTM')
+    predictor_with_sentiment.train_model('Random forest')
+    predictor_no_sentiment.train_model('Random forest')
     # predictor_with_sentiment.train_model('CNN')
 
     # keras_regressor = KerasRegressor(build_fn=predictor_no_sentiment, epochs=50, batch_size=32, verbose=0)
